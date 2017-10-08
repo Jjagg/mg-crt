@@ -228,7 +228,7 @@ float3 Bloom(float2 pos, float2 texture_size){
 
 // Shadow mask 
 float3 Mask(float2 pos){
-  float3 mask=float3(maskDark,maskDark,maskDark);
+  float3 mask = maskDark;
 
   // Very compressed TV style shadow mask.
 #if shadowMask == 1
@@ -252,7 +252,7 @@ float3 Mask(float2 pos){
     else if(pos.x<0.666)mask.g=maskLight;
     else mask.b=maskLight;
 
-#elif shadowMask == 2
+#elif shadowMask == 3
   // Stretched VGA style shadow mask (same as prior shaders).
     pos.x+=pos.y*3.0;
     pos.x=frac(pos.x/6.0);
