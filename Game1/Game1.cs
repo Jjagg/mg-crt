@@ -57,7 +57,7 @@ namespace Game1
             _effect.Parameters["maskLight"]?.SetValue(1.5f);
             _effect.Parameters["scaleInLinearGamma"]?.SetValue(1.0f);
             _effect.Parameters["shadowMask"]?.SetValue(3.0f);
-            _effect.Parameters["brightboost"]?.SetValue(1.0f);
+            _effect.Parameters["brightboost"]?.SetValue(0.92f);
             _effect.Parameters["hardBloomScan"]?.SetValue(-1.5f);
             _effect.Parameters["hardBloomPix"]?.SetValue(-2.0f);
             _effect.Parameters["bloomAmount"]?.SetValue(0.15f);
