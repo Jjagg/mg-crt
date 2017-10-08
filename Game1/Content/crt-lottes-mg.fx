@@ -78,8 +78,6 @@ sampler2D DecalSampler = sampler_state
 
 float4x4 modelViewProj;
 
-#define warp float2(warpX,warpY)
-
 //------------------------------------------------------------------------
 
 // sRGB to Linear.
@@ -230,12 +228,6 @@ float3 Bloom(float2 pos, float2 texture_size){
   float we=BloomScan(pos, 2.0, texture_size);
   return a*wa+b*wb+c*wc+d*wd+e*we;}
 
-// Distortion of scanlines, and end of screen alpha.
-float2 Warp(float2 pos){
-  pos=pos*2.0-1.0;    
-  pos*=float2(1.0+(pos.y*pos.y)*warp.x,1.0+(pos.x*pos.x)*warp.y);
-  return pos*0.5+0.5;}
-
 // Shadow mask 
 float3 Mask(float2 pos){
   float3 mask=float3(maskDark,maskDark,maskDark);
@@ -287,25 +279,25 @@ float3 Mask(float2 pos){
   return mask;
 }    
 
-float4 crt_lottes(float2 texture_size, float2 video_size, float2 output_size, float2 tex, sampler2D s0)
+float4 crt_lottes(float2 tex)
 {
-  float2 pos=Warp(tex.xy*(texture_size.xy/video_size.xy))*(video_size.xy/texture_size.xy);
-  float3 outColor = Tri(pos, texture_size);
+  float2 pos=tex.xy*(textureSize.xy/videoSize.xy)*(videoSize.xy/textureSize.xy);
+  float3 outColor = Tri(pos, textureSize);
 
 #ifdef DO_BLOOM
   //Add Bloom
-  outColor.rgb+=Bloom(pos, texture_size)*bloomAmount;
+  outColor.rgb+=Bloom(pos, textureSize)*bloomAmount;
 #endif
 
   if(shadowMask)
-    outColor.rgb*=Mask(floor(tex.xy*(texture_size.xy/video_size.xy)*output_size.xy)+float2(0.5,0.5));
+    outColor.rgb*=Mask(floor(tex.xy*(textureSize.xy/videoSize.xy)*outputSize.xy) + 0.5);
 
   return float4(ToSrgb(outColor.rgb),1.0);
 }
 
 float4 main_fragment(VertexShaderOutput VOUT) : COLOR0
 {
-	return crt_lottes(textureSize, videoSize, outputSize, VOUT.texCoord, DecalSampler);
+	return crt_lottes(VOUT.texCoord);
 }
 
 technique
