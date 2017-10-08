@@ -52,7 +52,7 @@ float warpY;
 float maskDark;
 float maskLight;
 float scaleInLinearGamma;
-float shadowMask;
+#define shadowMask 3
 float brightboost;
 float hardBloomScan;
 float hardBloomPix;
@@ -233,7 +233,7 @@ float3 Mask(float2 pos){
   float3 mask=float3(maskDark,maskDark,maskDark);
 
   // Very compressed TV style shadow mask.
-  if (shadowMask == 1) {
+#if shadowMask == 1
     float mask_line = maskLight;
     float odd=0.0;
     if(frac(pos.x/6.0)<0.5) odd = 1.0;
@@ -244,29 +244,27 @@ float3 Mask(float2 pos){
     else if(pos.x<0.666)mask.g=maskLight;
     else mask.b=maskLight;
     mask *= mask_line;  
-  } 
+
+#elif shadowMask == 2
 
   // Aperture-grille.
-  else if (shadowMask == 2) {
     pos.x=frac(pos.x/3.0);
 
     if(pos.x<0.333)mask.r=maskLight;
     else if(pos.x<0.666)mask.g=maskLight;
     else mask.b=maskLight;
-  } 
 
+#elif shadowMask == 2
   // Stretched VGA style shadow mask (same as prior shaders).
-  else if (shadowMask == 3) {
     pos.x+=pos.y*3.0;
     pos.x=frac(pos.x/6.0);
 
     if(pos.x<0.333)mask.r=maskLight;
     else if(pos.x<0.666)mask.g=maskLight;
     else mask.b=maskLight;
-  }
 
   // VGA style shadow mask.
-  else if (shadowMask == 4) {
+#else
     pos.xy=floor(pos.xy*float2(1.0,0.5));
     pos.x+=pos.y*3.0;
     pos.x=frac(pos.x/6.0);
@@ -274,7 +272,7 @@ float3 Mask(float2 pos){
     if(pos.x<0.333)mask.r=maskLight;
     else if(pos.x<0.666)mask.g=maskLight;
     else mask.b=maskLight;
-  }
+#endif
 
   return mask;
 }    
@@ -289,8 +287,9 @@ float4 crt_lottes(float2 tex)
   outColor.rgb+=Bloom(pos, textureSize)*bloomAmount;
 #endif
 
-  if(shadowMask)
+#if shadowMask != 0
     outColor.rgb*=Mask(floor(tex.xy*(textureSize.xy/videoSize.xy)*outputSize.xy) + 0.5);
+#endif
 
   return float4(ToSrgb(outColor.rgb),1.0);
 }

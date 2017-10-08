@@ -17,7 +17,8 @@ namespace Game1
 
         private Texture2D _texture;
         private Effect _effect;
-        
+        private bool _enabled = true;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -29,6 +30,7 @@ namespace Game1
         protected override void Initialize()
         {
             Components.Add(new FrameRateCounter(this));
+            Components.Add(new Input(this));
             base.Initialize();
         }
 
@@ -61,9 +63,9 @@ namespace Game1
             _effect.Parameters["bloomAmount"]?.SetValue(0.15f);
             _effect.Parameters["shape"]?.SetValue(2.0f);
 
-            _effect.Parameters["textureSize"].SetValue(new Vector2(_texture.Width, _texture.Height));
-            _effect.Parameters["videoSize"].SetValue(new Vector2(_texture.Width, _texture.Height));
-            _effect.Parameters["outputSize"].SetValue(new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
+            _effect.Parameters["textureSize"]?.SetValue(new Vector2(_texture.Width, _texture.Height));
+            _effect.Parameters["videoSize"]?.SetValue(new Vector2(_texture.Width, _texture.Height));
+            _effect.Parameters["outputSize"]?.SetValue(new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
 
             var vp = GraphicsDevice.Viewport;
             var output = new RenderTarget2D(GraphicsDevice, vp.Width, vp.Height);
@@ -81,8 +83,10 @@ namespace Game1
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Input.IsDown(Keys.Escape))
                 Exit();
+            if (Input.IsPressed(Keys.T))
+                _enabled = !_enabled;
 
             base.Update(gameTime);
         }
@@ -91,7 +95,7 @@ namespace Game1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin(effect: _effect);
+            _spriteBatch.Begin(effect: _enabled ? _effect : null);
             _spriteBatch.Draw(_texture, Vector2.Zero, Color.White);
             _spriteBatch.End();
 
