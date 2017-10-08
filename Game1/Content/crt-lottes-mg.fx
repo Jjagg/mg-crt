@@ -82,11 +82,7 @@ float4x4 modelViewProj;
 
 // sRGB to Linear.
 // Assuing using sRGB typed textures this should not be needed.
-#ifdef SIMPLE_LINEAR_GAMMA
-float3 ToLinear(float3 c)
-{
-   return c;
-}
+#if SIMPLE_LINEAR_GAMMA > 0
 
 float3 ToSrgb(float3 c)
 {
@@ -281,7 +277,7 @@ float3 Mask(float2 pos){
 
 float4 crt_lottes(float2 tex)
 {
-  float2 pos=tex.xy*(textureSize.xy/videoSize.xy)*(videoSize.xy/textureSize.xy);
+    float2 pos = tex.xy;
   float3 outColor = Tri(pos, textureSize);
 
 #ifdef DO_BLOOM
@@ -290,7 +286,7 @@ float4 crt_lottes(float2 tex)
 #endif
 
 #if shadowMask != 0
-    outColor.rgb*=Mask(floor(tex.xy*(textureSize.xy/videoSize.xy)*outputSize.xy) + 0.5);
+    outColor.rgb*=Mask(floor(tex.xy*outputSize.xy) + 0.5);
 #endif
 
   return float4(ToSrgb(outColor.rgb),1.0);

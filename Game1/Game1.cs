@@ -63,9 +63,11 @@ namespace Game1
             _effect.Parameters["bloomAmount"]?.SetValue(0.15f);
             _effect.Parameters["shape"]?.SetValue(2.0f);
 
-            _effect.Parameters["textureSize"]?.SetValue(new Vector2(_texture.Width, _texture.Height));
-            _effect.Parameters["videoSize"]?.SetValue(new Vector2(_texture.Width, _texture.Height));
-            _effect.Parameters["outputSize"]?.SetValue(new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
+            var texSize = new Vector2(_texture.Width, _texture.Height);
+            _effect.Parameters["textureSize"]?.SetValue(texSize);
+            _effect.Parameters["videoSize"]?.SetValue(texSize);
+            var outSize = new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            _effect.Parameters["outputSize"]?.SetValue(outSize);
 
             var vp = GraphicsDevice.Viewport;
             var output = new RenderTarget2D(GraphicsDevice, vp.Width, vp.Height);
