@@ -65,7 +65,7 @@ float2 outputSize;
 
 //Uncomment to reduce instructions with simpler linearization
 //(fixes HD3000 Sandy Bridge IGP)
-//#define SIMPLE_LINEAR_GAMMA
+#define SIMPLE_LINEAR_GAMMA 2
 #define DO_BLOOM 1
 
 // ------------- //
@@ -83,10 +83,6 @@ float4x4 modelViewProj;
 // sRGB to Linear.
 // Assuing using sRGB typed textures this should not be needed.
 #ifdef SIMPLE_LINEAR_GAMMA
-float ToLinear1(float c)
-{
-   return c;
-}
 float3 ToLinear(float3 c)
 {
    return c;
@@ -94,7 +90,11 @@ float3 ToLinear(float3 c)
 
 float3 ToSrgb(float3 c)
 {
-   return pow(c, 1.0 / 2.2);
+#if SIMPLE_LINEAR_GAMMA == 1
+	return pow(c, 1 / 2.2);
+#else
+   return sqrt(c);
+#endif
 }
 #else
 float ToLinear1(float c)
@@ -127,8 +127,10 @@ float3 ToSrgb(float3 c)
 // Also zero's off screen.
 float3 Fetch(float2 pos, float2 off, float2 texture_size){
   pos=(floor(pos*texture_size.xy+off)+float2(0.5,0.5))/texture_size.xy;
-#ifdef SIMPLE_LINEAR_GAMMA
-  return ToLinear(brightboost * pow(tex2D(DecalSampler,pos.xy).rgb, 2.2));
+#if SIMPLE_LINEAR_GAMMA == 1
+  return brightboost * pow(tex2D(DecalSampler,pos.xy).rgb, 2.2);
+#elif SIMPLE_LINEAR_GAMMA == 2
+  return brightboost * pow(tex2D(DecalSampler,pos.xy).rgb, 2);
 #else
   return ToLinear(brightboost * tex2D(DecalSampler,pos.xy).rgb);
 #endif
