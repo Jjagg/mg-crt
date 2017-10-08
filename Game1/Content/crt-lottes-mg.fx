@@ -253,11 +253,14 @@ float3 Mask(float2 pos){
 #elif shadowMask == 3
   // Stretched VGA style shadow mask (same as prior shaders).
     pos.x+=pos.y*3.0;
-    pos.x=frac(pos.x/6.0);
 
+    /*pos.x=frac(pos.x/6.0);
     if(pos.x<0.333)mask.r=maskLight;
     else if(pos.x<0.666)mask.g=maskLight;
-    else mask.b=maskLight;
+    else mask.b=maskLight;*/
+
+    pos.x=frac(pos.x/6.0) * 3;
+    mask = -min(floor(float3(pos.x, 2 * abs(pos.x - 1.5), 3 - pos.x)), 1) + 1.5;
 
 #else
   // VGA style shadow mask.
