@@ -45,18 +45,16 @@ struct VertexShaderOutput
 // #pragma parameter bloomAmount "bloom amt" 0.15 0.0 1.0 0.05
 // #pragma parameter shape "filter kernel shape" 2.0 0.0 10.0 0.05
 
-float hardScan;
-float hardPix;
-float warpX;
-float warpY;
-float maskDark;
-float maskLight;
-float scaleInLinearGamma;
+#define hardPix -3.0
 #define shadowMask 3
+#define hardScan -8.0
+#define hardBloomPix -2.0
+#define hardBloomScan -1.5
+#define maskDark 0.5
+#define maskLight 1.5
+#define bloomAmount 0.15
+
 float brightboost;
-float hardBloomScan;
-float hardBloomPix;
-float bloomAmount;
 float shape;
 
 float2 textureSize;
@@ -261,8 +259,8 @@ float3 Mask(float2 pos){
     else if(pos.x<0.666)mask.g=maskLight;
     else mask.b=maskLight;
 
-  // VGA style shadow mask.
 #else
+  // VGA style shadow mask.
     pos.xy=floor(pos.xy*float2(1.0,0.5));
     pos.x+=pos.y*3.0;
     pos.x=frac(pos.x/6.0);

@@ -49,19 +49,7 @@ namespace Game1
             _graphics.ApplyChanges();
 
             _effect = Content.Load<Effect>("crt-lottes-mg");
-            _effect.Parameters["hardScan"]?.SetValue(-8.0f);
-            _effect.Parameters["hardPix"]?.SetValue(-3.0f);
-            _effect.Parameters["warpX"]?.SetValue(0.031f);
-            _effect.Parameters["warpY"]?.SetValue(0.041f);
-            _effect.Parameters["maskDark"]?.SetValue(0.5f);
-            _effect.Parameters["maskLight"]?.SetValue(1.5f);
-            _effect.Parameters["scaleInLinearGamma"]?.SetValue(1.0f);
-            _effect.Parameters["shadowMask"]?.SetValue(3.0f);
-            _effect.Parameters["brightboost"]?.SetValue(0.92f);
-            _effect.Parameters["hardBloomScan"]?.SetValue(-1.5f);
-            _effect.Parameters["hardBloomPix"]?.SetValue(-2.0f);
-            _effect.Parameters["bloomAmount"]?.SetValue(0.15f);
-            _effect.Parameters["shape"]?.SetValue(2.0f);
+            _effect.Parameters["brightboost"].SetValue(0.92f);
 
             var texSize = new Vector2(_texture.Width, _texture.Height);
             _effect.Parameters["textureSize"]?.SetValue(texSize);
