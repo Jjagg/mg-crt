@@ -140,7 +140,7 @@ float3 Fetch(float2 pos, float2 off, float2 texture_size){
 float2 Dist(float2 pos, float2 texture_size){pos=pos*texture_size.xy;return -(frac(pos)-float2(0.5, 0.5));}
     
 // 1D Gaussian.
-float Gaus(float pos,float scale){return exp2(scale*pow(abs(pos),shape));}
+float Gaus(float pos,float scale){return exp2(scale*pos*pos);}
 
 // 3-tap Gaussian filter along horz line.
 float3 Horz3(float2 pos, float off, float2 texture_size){
